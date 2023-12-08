@@ -3,10 +3,12 @@ import time
 from streamlit_tags import st_tags
 from aiinterview import chatConversation
 
-def query(total_Skills):
+def query(total_Skills,openai_api_key):
 # Initialize chat history
     jd = st.text_area("Please enter the job description here (If you don't have one, enter keywords, such as PostgreSQL or Python instead): ")
-    
+    if not openai_api_key:
+        st.info("Please add your OpenAI API key to continue.")
+        st.stop()
     if "messages" not in st.session_state:
         st.session_state.messages = []
         
@@ -30,7 +32,7 @@ def query(total_Skills):
             with st.chat_message("user"):
                 st.markdown(answer)
             with st.spinner("thinking..."):
-                response=chatConversation(answer,jobdescription_and_skills)
+                response=chatConversation(answer,jobdescription_and_skills,openai_api_key)
             if response:
             # Display assistant response in chat message container
                 with st.chat_message(name="assistant"):
@@ -46,6 +48,7 @@ def query(total_Skills):
 
 st.title(":blue[AI INTERVIEWER]")
 with st.sidebar:
+    openai_api_key = st.text_input("OpenAI API Key",type="password")
     st.header('TECHNICAL SKILLS',divider='rainbow')
     total_Skills = st_tags(label='ENTER YOUR SKILLS',
             text='Please add more Skills',
@@ -53,7 +56,7 @@ with st.sidebar:
             suggestions=[],
             maxtags = 5,
             key='1')
-query(total_Skills)
+query(total_Skills,openai_api_key)
     
     
  
