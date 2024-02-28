@@ -89,7 +89,7 @@ if not st.session_state.display_analytics:
     )
     st.image(im, width=100)
     st.markdown(
-        f"""# {home_title} <span style=color:#2E9BF5><font size=5>Beta</font></span>""", unsafe_allow_html=True)
+        f"""# {home_title}""", unsafe_allow_html=True)
     st.markdown("""\n""")
     st.markdown("##### Welcome to AI Interviewer! 👏 AI Interviewer is your personal interviewer powered by generative AI that conducts interviews."
                 "You can enter job descriptions, and AI Interviewer will ask you customized questions.")
