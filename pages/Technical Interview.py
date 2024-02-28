@@ -5,37 +5,25 @@ import json
 from aiinterview import chatConversation,get_feedback
 
 def query(OPENAI_API_KEY):
-    # percentage=0
     if "jobdescription" not in st.session_state:
         st.session_state.jobdescription=None
     if "messages" not in st.session_state:
         st.session_state.messages = []
-    
+    if "open_api_key" not in st.session_state:
+        st.session_state.open_api_key=None
     if "count" not in st.session_state:
         st.session_state.count=0
+    if "display_analytics" not in st.session_state:
+        st.session_state.display_analytics=False
 # Initialize chat history
     jd = st.text_area("Please enter the job description here (If you don't have one, enter keywords, such as PostgreSQL or Python instead): ")
     st.session_state.jobdescription=jd
-    print(len(st.session_state.messages))
-    
-    if len(st.session_state.messages)>=17:
-        if st.button("Generate Feedback"):
-            # print(st.session_state.messages,88888888888888888888)
-            feedback_response=get_feedback(st.session_state.messages[2:],"please provide feedback of my interview process",OPENAI_API_KEY)
-            if feedback_response:   
-                st.session_state.messages=[]
-                st.session_state.count=0
-                st.session_state.jobdescription=None
-                placeholder=st.empty()
-                full_response = ""
-                for chunk in feedback_response:
-                    full_response+=chunk.content
-                    if bool(chunk):
-                        time.sleep(0.02)
-                        placeholder.markdown(full_response + "")
-                placeholder.markdown(full_response)
-                st.download_button(label="Download Interview Feedback", data=full_response, file_name="interview_feedback.txt")
-                st.stop()
+    if len(st.session_state.messages)>=16:
+        if st.button("Submit Interview!"):
+            st.session_state.display_analytics=True
+            st.switch_page("pages/Feedback Analytics.py")
+
+        
     # Display chat messages from history on app rerun
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
@@ -76,6 +64,7 @@ with st.sidebar:
     OPENAI_API_KEY=st.text_input(placeholder="OPENAI API KEY",label="OPENAI API KEY",type="password",key="OPENAI_API_KEY",label_visibility="collapsed")
 
 if OPENAI_API_KEY:
+    st.session_state.open_api_key=OPENAI_API_KEY
     query(OPENAI_API_KEY)
     
     

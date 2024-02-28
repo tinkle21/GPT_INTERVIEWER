@@ -8,8 +8,11 @@ from langchain.prompts import (
 )
 import openai
 from langchain.schema import HumanMessage, SystemMessage
-from instruction import instructionForBot1,feedback_template
+from instruction import instructionForBot1,feedback_template,feedback_analytics
 from langchain_openai  import ChatOpenAI
+from langchain.prompts import PromptTemplate
+from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.pydantic_v1 import BaseModel, Field
 
 
 prompt = ChatPromptTemplate(
@@ -43,5 +46,34 @@ def get_feedback(history,input_question,OPENAI_API_KEY):
         content=input_question
     )]
     chat = ChatOpenAI(streaming=True,temperature=0.0,api_key=OPENAI_API_KEY)
-    response=chat.stream(messages)
+    response=chat.invoke(messages)
     return response
+
+
+
+class ContentEnhancer(BaseModel):
+    confidence_level: int = Field(
+        description="this field contains the value of confidence")
+    technical_skill: int = Field(
+	description="this field contains the value of technical knowledge")
+    accurate_answer:int=Field(
+	description="this field contains the value of accurate answers")
+    total_score:int =  Field(
+	description="this field contains the total score in interview session")
+    
+def get_feedback_analytics(feedback_instruction,interview_history,OPENAI_API_KEY):
+
+        parser = JsonOutputParser(pydantic_object=ContentEnhancer)
+        prompt_for_feedback_analytics =PromptTemplate(input_variables=["feedback_instruction","interview_history"],
+                                                      template="{feedback_instruction} {interview_history}",
+                                                      partial_variables={"format_instructions": parser.get_format_instructions()})
+
+    
+        llm_model = ChatOpenAI(temperature=0.2, api_key=OPENAI_API_KEY)
+
+        enhance_content_chain = prompt_for_feedback_analytics | llm_model | parser
+
+        response = enhance_content_chain.invoke(
+            {"feedback_instruction": feedback_instruction, "interview_history": interview_history})
+        return response
+    
