@@ -76,4 +76,4 @@ For a detailed list of dependencies, refer to the `requirements.txt` file.
 We welcome contributions to AIInterviewer! If you'd like to contribute, feel free to fork the repository and make your changes. Create a pull request, and we'll review your contribution. Thank you for considering contributing to our project!
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](https://github.com/AIOnGraph/GPT_INTERVIEWER/blob/main/LICENSE.txt).
