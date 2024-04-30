@@ -30,7 +30,7 @@ def chatConversation(answer, jobdescriptionSkills, OPENAI_API_KEY):
         llm = ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo",
                          api_key=OPENAI_API_KEY)
         conversation_chain = LLMChain(
-            llm=llm, prompt=prompt, verbose=True, memory=memory)
+            llm=llm, prompt=prompt, memory=memory)
         response = conversation_chain(
             {"question": answer, "instructionForBot": instructionForBot1, "jobdescription_and_skills": jobdescriptionSkills})
         return response
@@ -51,7 +51,7 @@ def get_feedback(history, input_question, OPENAI_API_KEY):
     return response
 
 
-class ContentEnhancer(BaseModel):
+class Feedback(BaseModel):
     confidence_level: int = Field(
         description="this field contains the value of confidence")
     technical_skill: int = Field(
@@ -64,7 +64,7 @@ class ContentEnhancer(BaseModel):
 
 def get_feedback_analytics(feedback_instruction, interview_history, OPENAI_API_KEY):
 
-    parser = JsonOutputParser(pydantic_object=ContentEnhancer)
+    parser = JsonOutputParser(pydantic_object=Feedback)
     prompt_for_feedback_analytics = PromptTemplate(input_variables=["feedback_instruction", "interview_history"],
                                                    template="{feedback_instruction} {interview_history}",
                                                    partial_variables={"format_instructions": parser.get_format_instructions()})

@@ -2,7 +2,7 @@ import streamlit as st
 import time
 from streamlit_lottie import st_lottie
 import json
-from aiinterview import chatConversation, get_feedback
+from aiinterview import chatConversation
 
 
 def query(OPENAI_API_KEY):
@@ -16,7 +16,6 @@ def query(OPENAI_API_KEY):
         st.session_state.count = 0
     if "display_analytics" not in st.session_state:
         st.session_state.display_analytics = False
-# Initialize chat history
     jd = st.text_area(
         "Please enter the job description here (If you don't have one, enter keywords, such as PostgreSQL or Python instead): ")
     st.session_state.jobdescription = jd
@@ -25,7 +24,6 @@ def query(OPENAI_API_KEY):
             st.session_state.display_analytics = True
             st.switch_page("pages/Feedback Analytics.py")
 
-    # Display chat messages from history on app rerun
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
@@ -38,14 +36,12 @@ def query(OPENAI_API_KEY):
         if answer := st.chat_input("write your answer here..."):
             st.session_state.messages.append(
                 {"role": "user", "content": answer})
-            # Display user message in chat message container
             with st.chat_message("user"):
                 st.markdown(answer)
             with st.spinner("thinking..."):
                 response = chatConversation(
                     answer, jobdescription_and_skills, OPENAI_API_KEY)
             if response:
-                # Display assistant response in chat message container
                 with st.chat_message(name="assistant"):
                     message_placeholder = st.empty()
                     full_response = ""
